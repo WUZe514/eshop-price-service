@@ -1,6 +1,7 @@
 package com.roncoo.eshop.price.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +55,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         String dataJSON = jedis.get("product_price_" + productId);
         if (dataJSON != null && !"".equals(dataJSON)) {
             JSONObject dataJSONObject = JSONObject.parseObject(dataJSON);
-            dataJSONObject.put("id", "-1");
+            if (StringUtils.isEmpty(dataJSONObject.get("id").toString())) {
+                dataJSONObject.put("id", "-1");
+            }
             return JSONObject.parseObject(dataJSONObject.toJSONString(), ProductPrice.class);
         } else {
             return productPriceMapper.findByProductId(productId);
